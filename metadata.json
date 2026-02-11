@@ -1,0 +1,8 @@
+{
+  "name": "Copy of AiNabi-CRM",
+  "description": "A comprehensive AI-powered CRM and LMS platform for modern training centers.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
