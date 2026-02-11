@@ -1,5 +1,11 @@
-
-import { Student, StudentStatus, PaymentStatus, Course, Lead, Schedule } from '../types';
+import { 
+  Course, 
+  Lead, 
+  PaymentStatus, 
+  Schedule, 
+  Student, 
+  StudentStatus 
+} from '../types';
 
 export const INITIAL_STUDENTS: Student[] = [
   {
@@ -68,15 +74,73 @@ export const INITIAL_COURSES: Course[] = [
 ];
 
 export const INITIAL_LEADS: Lead[] = [
-  { id: 'l1', name: 'Almaz Joroev', source: 'Instagram', status: 'New', email: 'almaz@gmail.com' },
-  { id: 'l2', name: 'Dinara Sultanova', source: 'Facebook', status: 'Contacted', email: 'dinara@gmail.com' },
-  { id: 'l3', name: 'Nursultan Abdyrakhmanov', source: 'Telegram', status: 'Meeting', email: 'nurs@gmail.com' }
+  { 
+    id: 'l1', 
+    name: 'Almaz Joroev', 
+    source: 'Instagram', 
+    status: 'New', 
+    email: 'almaz@gmail.com' 
+  },
+  { 
+    id: 'l2', 
+    name: 'Dinara Sultanova', 
+    source: 'Facebook', 
+    status: 'Contacted', 
+    email: 'dinara@gmail.com' 
+  },
+  { 
+    id: 'l3', 
+    name: 'Nursultan Abdyrakhmanov', 
+    source: 'Telegram', 
+    status: 'Meeting', 
+    email: 'nurs@gmail.com' 
+  }
 ];
 
 export const INITIAL_SCHEDULE: Schedule[] = [
-  { id: 's1', courseId: 'c1', courseTitle: 'Frontend React', instructor: 'Eldar Alymkulov', day: 'Monday', time: '18:00 - 20:00', room: 'Room 302' },
-  { id: 's2', courseId: 'c2', courseTitle: 'Python Backend', instructor: 'Tilek Borbiev', day: 'Tuesday', time: '14:00 - 16:00', room: 'Room 101' },
-  { id: 's3', courseId: 'c3', courseTitle: 'UI/UX Design', instructor: 'Cholpon Bekova', day: 'Monday', time: '10:00 - 12:00', room: 'Lab 1' },
-  { id: 's4', courseId: 'c1', courseTitle: 'Frontend React', instructor: 'Eldar Alymkulov', day: 'Wednesday', time: '18:00 - 20:00', room: 'Room 302' },
-  { id: 's5', courseId: 'c2', courseTitle: 'Python Backend', instructor: 'Tilek Borbiev', day: 'Thursday', time: '14:00 - 16:00', room: 'Room 101' },
+  { 
+    id: 's1', 
+    courseId: 'c1', 
+    courseTitle: 'Frontend React', 
+    instructor: 'Eldar Alymkulov', 
+    day: 'Monday', 
+    time: '18:00 - 20:00', 
+    room: 'Room 302' 
+  },
+  { 
+    id: 's2', 
+    courseId: 'c2', 
+    courseTitle: 'Python Backend', 
+    instructor: 'Tilek Borbiev', 
+    day: 'Tuesday', 
+    time: '14:00 - 16:00', 
+    room: 'Room 101' 
+  },
+  { 
+    id: 's3', 
+    courseId: 'c3', 
+    courseTitle: 'UI/UX Design', 
+    instructor: 'Cholpon Bekova', 
+    day: 'Monday', 
+    time: '10:00 - 12:00', 
+    room: 'Lab 1' 
+  },
+  { 
+    id: 's4', 
+    courseId: 'c1', 
+    courseTitle: 'Frontend React', 
+    instructor: 'Eldar Alymkulov', 
+    day: 'Wednesday', 
+    time: '18:00 - 20:00', 
+    room: 'Room 302' 
+  },
+  { 
+    id: 's5', 
+    courseId: 'c2', 
+    courseTitle: 'Python Backend', 
+    instructor: 'Tilek Borbiev', 
+    day: 'Thursday', 
+    time: '14:00 - 16:00', 
+    room: 'Room 101' 
+  }
 ];
