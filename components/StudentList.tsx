@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Search, Plus, Trash2, Download, X, Mail, Phone, MoreVertical, GraduationCap, Calendar } from 'lucide-react';
+import { Search, Filter, Plus, Mail, Phone, Trash2, Download, X, MoreVertical } from 'lucide-react';
 import { Student, StudentStatus, PaymentStatus } from '../types';
 
 interface StudentListProps {
@@ -30,7 +31,7 @@ const StudentList: React.FC<StudentListProps> = ({ students, setStudents, search
   const handleAddStudent = (e: React.FormEvent) => {
     e.preventDefault();
     const student: Student = {
-      id: 'st-' + Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).substr(2, 9),
       ...newStudent,
       courses: [newStudent.course],
       status: StudentStatus.ACTIVE,
@@ -43,172 +44,161 @@ const StudentList: React.FC<StudentListProps> = ({ students, setStudents, search
   };
 
   const filteredStudents = students.filter(s => 
-    `${s.firstName} ${s.lastName} ${s.email} ${s.phone}`.toLowerCase().includes((searchTerm || localSearch).toLowerCase())
+    `${s.firstName} ${s.lastName} ${s.email}`.toLowerCase().includes((searchTerm || localSearch).toLowerCase())
   );
 
   const getStatusColor = (status: StudentStatus) => {
-    const colors = {
-      [StudentStatus.ACTIVE]: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
-      [StudentStatus.GRADUATED]: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
-      [StudentStatus.DROPPED]: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
-    };
-    return colors[status] || 'bg-slate-500/10 text-slate-500';
+    switch (status) {
+      case StudentStatus.ACTIVE: return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+      case StudentStatus.GRADUATED: return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+      case StudentStatus.DROPPED: return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+      default: return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400';
+    }
   };
 
   return (
-    <div className="space-y-6 pb-20 sm:pb-0">
-      
-      {/* --- ACTION BAR (Responsive) --- */}
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between sm:hidden">
-            <h2 className="text-2xl font-black dark:text-white">Студенттер</h2>
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="p-3 bg-indigo-600 text-white rounded-2xl shadow-lg"
-            >
-              <Plus size={24} />
-            </button>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="relative flex-1 max-w-md w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <input 
+            type="text" 
+            placeholder="Студенттин аты же почтасы..." 
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl outline-none transition-all shadow-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus:ring-4 focus:ring-indigo-100 dark:focus:ring-slate-800 focus:border-indigo-400"
+            value={localSearch}
+            onChange={(e) => setLocalSearch(e.target.value)}
+          />
         </div>
 
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="relative group flex-1 max-w-xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-indigo-500 transition-colors" />
-            <input 
-              type="text" 
-              placeholder="Издөө..." 
-              className="w-full pl-12 pr-4 py-3 sm:py-4 rounded-2xl outline-none transition-all bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 focus:ring-4 focus:ring-indigo-500/10"
-              value={localSearch}
-              onChange={(e) => setLocalSearch(e.target.value)}
-            />
-          </div>
+        <button className="w-full lg:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20"
+                onClick={() => setIsModalOpen(true)}>
+          <Plus className="w-4 h-4" />
+          Жаңы студент
+        </button>
+      </div>
 
-          <div className="hidden sm:flex items-center gap-3">
-            <button className="flex items-center gap-2 px-5 py-4 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-2xl font-bold hover:bg-slate-200 transition-all">
-              <Download className="w-4 h-4" />
-              <span>CSV</span>
-            </button>
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 px-6 py-4 bg-indigo-600 text-white rounded-2xl font-black shadow-xl shadow-indigo-600/20"
-            >
-              <Plus className="w-5 h-5" />
-              Каттоо
-            </button>
-          </div>
+      {/* Desktop Table View */}
+      <div className="hidden md:block bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider">
+                <th className="px-6 py-4 font-bold">Студент</th>
+                <th className="px-6 py-4 font-bold">Байланыш</th>
+                <th className="px-6 py-4 font-bold">Курстар</th>
+                <th className="px-6 py-4 font-bold">Статус</th>
+                <th className="px-6 py-4 font-bold">Дата</th>
+                <th className="px-6 py-4 font-bold"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-sm">
+              {filteredStudents.map((student) => (
+                <tr key={student.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                  <td className="px-6 py-5 font-semibold text-slate-900 dark:text-slate-100 truncate max-w-[150px]">{student.firstName} {student.lastName}</td>
+                  <td className="px-6 py-5 text-slate-600 dark:text-slate-400 truncate max-w-[150px]">{student.email}</td>
+                  <td className="px-6 py-5">
+                     <div className="flex flex-wrap gap-1">
+                      {student.courses.map((c, i) => (
+                        <span key={i} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded text-[10px]">
+                          {c}
+                        </span>
+                      ))}
+                     </div>
+                  </td>
+                  <td className="px-6 py-5">
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${getStatusColor(student.status)}`}>
+                      {student.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-5 text-slate-500 dark:text-slate-500">{student.enrollmentDate}</td>
+                  <td className="px-6 py-5 text-right">
+                    <button onClick={() => handleDelete(student.id)} className="p-2 text-slate-400 hover:text-red-600 transition-colors md:opacity-0 group-hover:opacity-100">
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {/* --- MOBILE VIEW (Cards) - Hidden on Desktop --- */}
-      <div className="grid grid-cols-1 gap-4 sm:hidden">
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
         {filteredStudents.map((student) => (
-          <div key={student.id} className="bg-white dark:bg-slate-900 p-5 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden group">
-             <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center gap-3">
-                   <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-black">
-                      {student.firstName[0]}{student.lastName[0]}
-                   </div>
-                   <div>
-                      <h3 className="font-black text-slate-900 dark:text-white">{student.firstName} {student.lastName}</h3>
-                      <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wider">{student.enrollmentDate}</p>
-                   </div>
+          <div key={student.id} className="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+            <div className="flex justify-between items-start mb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
+                  {student.firstName[0]}
                 </div>
-                <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase border ${getStatusColor(student.status)}`}>
-                  {student.status}
+                <div>
+                  <h4 className="font-bold text-slate-900 dark:text-white leading-tight">{student.firstName} {student.lastName}</h4>
+                  <p className="text-xs text-slate-500">{student.email}</p>
+                </div>
+              </div>
+              <span className={`px-2 py-0.5 rounded-lg text-[10px] font-bold ${getStatusColor(student.status)}`}>
+                {student.status}
+              </span>
+            </div>
+            
+            <div className="flex flex-wrap gap-1 mb-4">
+              {student.courses.map((c, i) => (
+                <span key={i} className="px-2 py-0.5 bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded text-[10px] border border-slate-100 dark:border-slate-700">
+                  {c}
                 </span>
-             </div>
+              ))}
+            </div>
 
-             <div className="space-y-3 mb-4">
-                <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                   <GraduationCap size={14} className="text-indigo-500" />
-                   <span className="font-bold">{student.courses.join(', ')}</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                   <Mail size={14} className="text-slate-400" />
-                   {student.email}
-                </div>
-             </div>
-
-             <div className="flex gap-2">
-                <a href={`tel:${student.phone}`} className="flex-1 flex items-center justify-center gap-2 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-black dark:text-white">
-                   <Phone size={14} /> Чалгыла
-                </a>
-                <button 
-                  onClick={() => handleDelete(student.id)}
-                  className="p-3 bg-rose-500/10 text-rose-500 rounded-xl"
-                >
-                   <Trash2 size={16} />
+            <div className="flex items-center justify-between pt-3 border-t border-slate-50 dark:border-slate-800">
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider">{student.enrollmentDate}</span>
+              <div className="flex gap-2">
+                <button className="p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                  <Phone className="w-4 h-4" />
                 </button>
-             </div>
+                <button onClick={() => handleDelete(student.id)} className="p-2 text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg">
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* --- DESKTOP VIEW (Table) - Hidden on Mobile --- */}
-      <div className="hidden sm:block bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-slate-50/50 dark:bg-slate-800/30 border-b border-slate-100 dark:border-slate-800 text-slate-400 text-[10px] uppercase tracking-[0.15em] font-black">
-              <th className="px-8 py-5">Студент</th>
-              <th className="px-6 py-5">Курстар</th>
-              <th className="px-6 py-5 text-center">Статус</th>
-              <th className="px-6 py-5">Дата</th>
-              <th className="px-8 py-5 text-right">Аракет</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
-            {filteredStudents.map((student) => (
-              <tr key={student.id} className="hover:bg-slate-50/80 dark:hover:bg-indigo-500/5 transition-all group">
-                <td className="px-8 py-5 text-sm font-black dark:text-white">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center">{student.firstName[0]}</div>
-                    {student.firstName} {student.lastName}
-                  </div>
-                </td>
-                <td className="px-6 py-5">
-                  <span className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded-md text-[10px] font-bold text-slate-600 dark:text-slate-400">
-                    {student.courses[0]}
-                  </span>
-                </td>
-                <td className="px-6 py-5 text-center">
-                  <span className={`px-3 py-1 rounded-full text-[9px] font-black border ${getStatusColor(student.status)}`}>
-                    {student.status}
-                  </span>
-                </td>
-                <td className="px-6 py-5 text-slate-500 text-sm">{student.enrollmentDate}</td>
-                <td className="px-8 py-5 text-right flex justify-end gap-2">
-                   <button onClick={() => handleDelete(student.id)} className="p-2 text-slate-300 hover:text-rose-500 transition-colors">
-                      <Trash2 size={16} />
-                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* --- RESPONSIVE MODAL --- */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-950/60 backdrop-blur-md">
-          <div className="bg-white dark:bg-slate-900 rounded-t-[2.5rem] sm:rounded-[3rem] w-full max-w-md shadow-2xl animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 duration-300 border dark:border-slate-800">
-            <div className="p-6 sm:p-8 flex items-center justify-between">
-              <h3 className="text-xl sm:text-2xl font-black dark:text-white">Жаңы студент</h3>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 bg-slate-100 dark:bg-slate-800 rounded-full">
-                <X size={20} className="dark:text-slate-400"/>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300 border dark:border-slate-800">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-800/50">
+              <h3 className="text-xl font-bold text-slate-800 dark:text-white">Жаңы студент</h3>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors">
+                <X className="w-5 h-5 dark:text-slate-400"/>
               </button>
             </div>
-            <form onSubmit={handleAddStudent} className="p-6 sm:p-8 pt-0 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <input required className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none text-sm dark:text-white"
-                  placeholder="Аты" value={newStudent.firstName} onChange={e => setNewStudent({...newStudent, firstName: e.target.value})} />
-                <input required className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none text-sm dark:text-white"
-                  placeholder="Фамилиясы" value={newStudent.lastName} onChange={e => setNewStudent({...newStudent, lastName: e.target.value})} />
+            <form onSubmit={handleAddStudent} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Аты</label>
+                  <input required type="text" className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 dark:text-white"
+                    value={newStudent.firstName} onChange={e => setNewStudent({...newStudent, firstName: e.target.value})} />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Фамилиясы</label>
+                  <input required type="text" className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 dark:text-white"
+                    value={newStudent.lastName} onChange={e => setNewStudent({...newStudent, lastName: e.target.value})} />
+                </div>
               </div>
-              <input required type="email" className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none text-sm dark:text-white"
-                placeholder="Email" value={newStudent.email} onChange={e => setNewStudent({...newStudent, email: e.target.value})} />
-              <input required className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl outline-none text-sm dark:text-white"
-                placeholder="Телефон" value={newStudent.phone} onChange={e => setNewStudent({...newStudent, phone: e.target.value})} />
-              <button type="submit" className="w-full py-4 sm:py-5 bg-indigo-600 text-white rounded-[1.5rem] font-black shadow-xl">
-                Сактоо
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Email</label>
+                <input required type="email" className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 dark:text-white"
+                  value={newStudent.email} onChange={e => setNewStudent({...newStudent, email: e.target.value})} />
+              </div>
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Телефон</label>
+                <input required type="text" className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:border-indigo-500 dark:text-white"
+                  value={newStudent.phone} onChange={e => setNewStudent({...newStudent, phone: e.target.value})} />
+              </div>
+              <button type="submit" className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all">
+                Студентти каттоо
               </button>
             </form>
           </div>
